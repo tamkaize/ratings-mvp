@@ -1,0 +1,794 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://research-desk.local/schemas/token-risk-rating.schema.json",
+  "title": "Complete Token Risk Rating Record",
+  "description": "Single self-contained storage and audit record for one exact-object, exact-route token risk assessment.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "methodology_version",
+    "rating_series_id",
+    "rating_id",
+    "rating_version",
+    "supersedes_rating_id",
+    "status",
+    "frozen_at",
+    "created_at",
+    "updated_at",
+    "rated_object",
+    "assumptions",
+    "sources",
+    "layers",
+    "edges",
+    "score_formation_specifications",
+    "factor_evaluations",
+    "component_evaluations",
+    "risk_conditions",
+    "attachments",
+    "operators",
+    "propagation_steps",
+    "critical_path_records",
+    "mitigation_effectiveness_records",
+    "gaps",
+    "reconciliation_records",
+    "limitation_records",
+    "conclusions",
+    "final_output",
+    "approvals",
+    "audit",
+    "change_log"
+  ],
+  "properties": {
+    "schema_version": { "const": "2.0.2-alpha" },
+    "methodology_version": { "type": "string", "minLength": 1 },
+    "rating_series_id": { "$ref": "#/$defs/id" },
+    "rating_id": { "$ref": "#/$defs/id" },
+    "rating_version": { "type": "integer", "minimum": 1 },
+    "supersedes_rating_id": { "$ref": "#/$defs/nullable_id" },
+    "status": {
+      "enum": ["draft", "in_review", "approved", "watchlist", "no_rate", "rejected", "superseded"]
+    },
+    "frozen_at": { "type": "string", "format": "date-time" },
+    "created_at": { "type": "string", "format": "date-time" },
+    "updated_at": { "type": "string", "format": "date-time" },
+    "rated_object": { "$ref": "#/$defs/rated_object" },
+    "assumptions": {
+      "type": "array",
+      "items": { "$ref": "#/$defs/assumption" }
+    },
+    "sources": {
+      "type": "array",
+      "items": { "$ref": "#/$defs/source" }
+    },
+    "layers": {
+      "type": "array",
+      "minItems": 1,
+      "items": { "$ref": "#/$defs/layer" }
+    },
+    "edges": {
+      "type": "array",
+      "items": { "$ref": "#/$defs/edge" }
+    },
+    "score_formation_specifications": {
+      "type": "array",
+      "items": { "$ref": "#/$defs/score_formation_specification" }
+    },
+    "factor_evaluations": {
+      "type": "array",
+      "items": { "$ref": "#/$defs/factor_evaluation" }
+    },
+    "component_evaluations": {
+      "type": "array",
+      "items": { "$ref": "#/$defs/component_evaluation" }
+    },
+    "risk_conditions": {
+      "type": "array",
+      "items": { "$ref": "#/$defs/risk_condition" }
+    },
+    "attachments": {
+      "type": "array",
+      "items": { "$ref": "#/$defs/attachment" }
+    },
+    "operators": {
+      "type": "array",
+      "items": { "$ref": "#/$defs/operator" }
+    },
+    "propagation_steps": {
+      "type": "array",
+      "minItems": 1,
+      "items": { "$ref": "#/$defs/propagation_step" }
+    },
+    "critical_path_records": {
+      "type": "array",
+      "items": { "$ref": "#/$defs/critical_path_record" }
+    },
+    "mitigation_effectiveness_records": {
+      "type": "array",
+      "items": { "$ref": "#/$defs/mitigation_effectiveness_record" }
+    },
+    "gaps": {
+      "type": "array",
+      "items": { "$ref": "#/$defs/gap" }
+    },
+    "reconciliation_records": {
+      "type": "array",
+      "minItems": 1,
+      "items": { "$ref": "#/$defs/reconciliation_record" }
+    },
+    "limitation_records": {
+      "type": "array",
+      "minItems": 1,
+      "items": { "$ref": "#/$defs/limitation_record" }
+    },
+    "conclusions": {
+      "type": "array",
+      "minItems": 1,
+      "items": { "$ref": "#/$defs/conclusion" }
+    },
+    "final_output": { "$ref": "#/$defs/final_output" },
+    "approvals": {
+      "type": "array",
+      "items": { "$ref": "#/$defs/approval" }
+    },
+    "audit": { "$ref": "#/$defs/audit" },
+    "change_log": {
+      "type": "array",
+      "items": { "$ref": "#/$defs/change" }
+    }
+  },
+  "$defs": {
+    "id": {
+      "type": "string",
+      "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{0,127}$"
+    },
+    "nullable_id": {
+      "oneOf": [
+        { "$ref": "#/$defs/id" },
+        { "type": "null" }
+      ]
+    },
+    "score_0_1": {
+      "type": "number",
+      "minimum": 0,
+      "maximum": 1
+    },
+    "nullable_score_0_1": {
+      "oneOf": [
+        { "$ref": "#/$defs/score_0_1" },
+        { "type": "null" }
+      ]
+    },
+    "evidence_state": {
+      "enum": ["complete", "partial", "stale", "contradictory", "missing", "unevaluable"]
+    },
+    "confidence": {
+      "description": "Confidence in the result. NO_RATE and REJECT are disposition statuses, not confidence levels.",
+      "enum": ["High", "Medium", "Low"]
+    },
+    "nullable_confidence": {
+      "oneOf": [
+        { "$ref": "#/$defs/confidence" },
+        { "type": "null" }
+      ]
+    },
+    "materiality": {
+      "description": "Functional materiality under the methodology's precedence rule: Required, then Dominant, then Modifier, then Immaterial. This is distinct from the observed risk score.",
+      "enum": ["Required", "Dominant", "Modifier", "Immaterial"]
+    },
+    "component_type": {
+      "enum": ["Instrument Mechanics", "Claim", "Substance / Yield Source", "Venue / Infrastructure", "Evidence / Confidence"]
+    },
+    "impact_pathway": {
+      "enum": ["payoff", "NAV", "redemption", "recovery", "liquidation", "valuation", "custody", "transfer", "settlement", "exit", "confidence"]
+    },
+    "rated_object": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "name",
+        "economic_form",
+        "chain",
+        "contract_or_market",
+        "rated_route",
+        "custody_route",
+        "redemption_or_exit_route",
+        "position_size_assumption",
+        "token_family_lane",
+        "primary_loss_object",
+        "secondary_loss_objects",
+        "review_date",
+        "source_cutoff",
+        "scope_exclusions"
+      ],
+      "properties": {
+        "name": { "type": "string", "minLength": 1 },
+        "economic_form": { "type": "string", "minLength": 1 },
+        "chain": { "type": "string", "minLength": 1 },
+        "contract_or_market": { "type": "string", "minLength": 1 },
+        "maturity": { "type": ["string", "null"], "format": "date-time" },
+        "rated_route": { "type": "string", "minLength": 1 },
+        "custody_route": { "type": "string", "minLength": 1 },
+        "redemption_or_exit_route": { "type": "string", "minLength": 1 },
+        "position_size_assumption": { "type": "string", "minLength": 1 },
+        "token_family_lane": { "type": "string", "minLength": 1 },
+        "primary_loss_object": { "type": "string", "minLength": 1 },
+        "secondary_loss_objects": {
+          "type": "array",
+          "items": { "type": "string", "minLength": 1 },
+          "uniqueItems": true
+        },
+        "review_date": { "type": "string", "format": "date" },
+        "source_cutoff": { "type": "string", "format": "date" },
+        "scope_exclusions": {
+          "type": "array",
+          "items": { "type": "string", "minLength": 1 }
+        }
+      }
+    },
+    "assumption": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["assumption_id", "statement", "type", "materiality", "sensitivity", "status"],
+      "properties": {
+        "assumption_id": { "$ref": "#/$defs/id" },
+        "statement": { "type": "string", "minLength": 1 },
+        "type": { "enum": ["observed", "analyst_assumption", "methodology_rule", "unresolved"] },
+        "materiality": { "$ref": "#/$defs/materiality" },
+        "sensitivity": { "type": "string", "minLength": 1 },
+        "status": { "enum": ["active", "resolved", "expired", "superseded"] }
+      }
+    },
+    "source": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["source_id", "title", "uri", "source_type", "publisher", "retrieval_status", "evidence_quality", "inspected_at", "exact_anchor"],
+      "properties": {
+        "source_id": { "$ref": "#/$defs/id" },
+        "title": { "type": "string", "minLength": 1 },
+        "uri": { "type": "string", "minLength": 1 },
+        "source_type": { "enum": ["official_docs", "official_api", "onchain", "legal", "audit", "attestation", "market_data", "rating_agency", "regulator", "third_party", "internal_workpaper"] },
+        "publisher": { "type": "string", "minLength": 1 },
+        "retrieval_status": { "enum": ["fetched", "local_inspected", "snippet_only", "failed", "not_inspected"] },
+        "evidence_quality": { "enum": ["strong", "medium", "weak", "unsupported"] },
+        "inspected_at": { "type": "string", "format": "date-time" },
+        "exact_anchor": { "type": "string", "minLength": 1 },
+        "content_hash": { "type": ["string", "null"] }
+      }
+    },
+    "layer": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["layer_id", "parent_layer_id", "object_name", "function", "instrument_route", "venue_route", "materiality", "materiality_reason", "horizon", "assessment_status", "non_assessment_reason", "evidence_outcome", "source_ids"],
+      "properties": {
+        "layer_id": { "$ref": "#/$defs/id" },
+        "parent_layer_id": { "$ref": "#/$defs/nullable_id" },
+        "object_name": { "type": "string", "minLength": 1 },
+        "function": { "type": "string", "minLength": 1 },
+        "instrument_route": { "type": "string", "minLength": 1 },
+        "venue_route": { "type": "string", "minLength": 1 },
+        "materiality": { "$ref": "#/$defs/materiality" },
+        "materiality_reason": { "type": "string", "minLength": 1 },
+        "horizon": { "type": "string", "minLength": 1 },
+        "assessment_status": { "enum": ["assessed", "unassessed_early_stop"] },
+        "non_assessment_reason": { "type": ["string", "null"], "minLength": 1 },
+        "evidence_outcome": {
+          "description": "Layer-level evidence confidence outcome. Evidence state is recorded on the underlying evaluations and Risk Conditions.",
+          "$ref": "#/$defs/confidence"
+        },
+        "source_ids": { "type": "array", "items": { "$ref": "#/$defs/id" }, "uniqueItems": true }
+      },
+      "allOf": [
+        {
+          "if": { "properties": { "assessment_status": { "const": "assessed" } } },
+          "then": { "properties": { "non_assessment_reason": { "type": "null" } } },
+          "else": { "properties": { "non_assessment_reason": { "type": "string", "minLength": 1 } } }
+        }
+      ]
+    },
+    "edge": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["edge_id", "parent_layer_id", "child_layer_id", "edge_type", "graph_role", "failure_condition", "impact_pathways", "materiality", "source_ids"],
+      "properties": {
+        "edge_id": { "$ref": "#/$defs/id" },
+        "parent_layer_id": { "$ref": "#/$defs/id" },
+        "child_layer_id": { "$ref": "#/$defs/id" },
+        "edge_type": { "enum": ["wraps", "transforms", "references", "settles_into", "redeems_into", "withdraws_from", "backed_by", "collateralized_by", "earns_from", "priced_by", "controlled_by", "custodied_by", "executed_on", "depends_on"] },
+        "graph_role": { "enum": ["D", "I", "S", "R"] },
+        "failure_condition": { "type": "string", "minLength": 1 },
+        "impact_pathways": { "type": "array", "minItems": 1, "items": { "$ref": "#/$defs/impact_pathway" }, "uniqueItems": true },
+        "materiality": { "$ref": "#/$defs/materiality" },
+        "source_ids": { "type": "array", "items": { "$ref": "#/$defs/id" }, "uniqueItems": true }
+      }
+    },
+    "score_formation_specification": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["score_formation_specification_id", "route_module", "version", "status", "component_types", "factor_definition_ids", "applicability_and_na_rule", "anchor_and_boundary_rule", "combining_rule", "dominance_and_override_rule", "missing_evidence_rule", "component_formula", "route_weight_allocation", "lineage_rule", "rounding_rule", "worked_boundary_examples", "owner", "independent_validator", "approver", "effective_date", "review_date", "change_id"],
+      "properties": {
+        "score_formation_specification_id": { "$ref": "#/$defs/id" },
+        "route_module": { "type": "string", "minLength": 1 },
+        "version": { "type": "string", "minLength": 1 },
+        "status": { "enum": ["draft", "approved", "expired", "superseded"] },
+        "calculator_id": { "type": ["string", "null"], "minLength": 1 },
+        "calculator_version": { "type": ["string", "null"], "minLength": 1 },
+        "test_vector_ids": { "type": "array", "items": { "$ref": "#/$defs/id" }, "uniqueItems": true },
+        "component_types": { "type": "array", "minItems": 1, "items": { "$ref": "#/$defs/component_type" }, "uniqueItems": true },
+        "factor_definition_ids": { "type": "array", "minItems": 1, "items": { "$ref": "#/$defs/id" }, "uniqueItems": true },
+        "applicability_and_na_rule": { "type": "string", "minLength": 1 },
+        "anchor_and_boundary_rule": { "type": "string", "minLength": 1 },
+        "combining_rule": { "type": "string", "minLength": 1 },
+        "dominance_and_override_rule": { "type": "string", "minLength": 1 },
+        "missing_evidence_rule": { "type": "string", "minLength": 1 },
+        "component_formula": { "type": "string", "minLength": 1 },
+        "route_weight_allocation": { "type": "string", "minLength": 1 },
+        "lineage_rule": { "type": "string", "minLength": 1 },
+        "rounding_rule": { "type": "string", "minLength": 1 },
+        "worked_boundary_examples": { "type": "array", "minItems": 1, "items": { "type": "string", "minLength": 1 } },
+        "owner": { "type": "string", "minLength": 1 },
+        "independent_validator": { "type": "string", "minLength": 1 },
+        "approver": { "type": "string", "minLength": 1 },
+        "effective_date": { "type": ["string", "null"], "format": "date" },
+        "review_date": { "type": "string", "format": "date" },
+        "change_id": { "$ref": "#/$defs/nullable_id" }
+      }
+    },
+    "factor_evaluation": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["factor_evaluation_id", "factor_definition_id", "layer_id", "component_evaluation_id", "factor_name", "applicability", "score", "materiality", "failure_condition", "impact_pathways", "horizon", "evidence_state", "source_ids", "rationale", "arithmetic_role", "attribution", "primary_carrier_id", "risk_condition_id", "diagnostic_contribution", "chargeable_contribution"],
+      "properties": {
+        "factor_evaluation_id": { "$ref": "#/$defs/id" },
+        "factor_definition_id": { "$ref": "#/$defs/id" },
+        "layer_id": { "$ref": "#/$defs/id" },
+        "component_evaluation_id": { "$ref": "#/$defs/id" },
+        "factor_name": { "type": "string", "minLength": 1 },
+        "applicability": { "enum": ["applicable", "N/A"] },
+        "score": { "$ref": "#/$defs/nullable_score_0_1" },
+        "materiality": { "$ref": "#/$defs/materiality" },
+        "failure_condition": { "type": "string", "minLength": 1 },
+        "impact_pathways": { "type": "array", "minItems": 1, "items": { "$ref": "#/$defs/impact_pathway" }, "uniqueItems": true },
+        "horizon": { "type": "string", "minLength": 1 },
+        "evidence_state": { "$ref": "#/$defs/evidence_state" },
+        "source_ids": { "type": "array", "items": { "$ref": "#/$defs/id" }, "uniqueItems": true },
+        "rationale": { "type": "string", "minLength": 1 },
+        "arithmetic_role": { "enum": ["directly_weighted", "component_input", "diagnostic_only"] },
+        "attribution": { "enum": ["NEW", "CARRIED", "SHARED", "N/A"] },
+        "primary_carrier_id": { "$ref": "#/$defs/nullable_id" },
+        "risk_condition_id": { "$ref": "#/$defs/nullable_id" },
+        "diagnostic_contribution": { "type": ["number", "null"], "minimum": 0 },
+        "chargeable_contribution": { "type": ["number", "null"], "minimum": 0 }
+      }
+    },
+    "component_evaluation": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["component_evaluation_id", "layer_id", "component_type", "score_formation_specification_id", "route_weight", "score", "aggregation_method", "factor_evaluation_ids", "diagnostic_contribution", "attribution", "primary_carrier_id", "chargeable_contribution", "rationale"],
+      "properties": {
+        "component_evaluation_id": { "$ref": "#/$defs/id" },
+        "layer_id": { "$ref": "#/$defs/id" },
+        "component_type": { "$ref": "#/$defs/component_type" },
+        "score_formation_specification_id": { "$ref": "#/$defs/id" },
+        "route_weight": { "type": "number", "minimum": 0, "maximum": 1 },
+        "score": { "$ref": "#/$defs/nullable_score_0_1" },
+        "aggregation_method": { "type": "string", "minLength": 1 },
+        "factor_evaluation_ids": { "type": "array", "items": { "$ref": "#/$defs/id" }, "uniqueItems": true },
+        "diagnostic_contribution": { "type": "number", "minimum": 0 },
+        "attribution": { "enum": ["NEW", "CARRIED", "SHARED", "MIXED", "N/A"] },
+        "primary_carrier_id": { "$ref": "#/$defs/nullable_id" },
+        "chargeable_contribution": { "type": "number", "minimum": 0 },
+        "rationale": { "type": "string", "minLength": 1 }
+      }
+    },
+    "risk_condition": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["risk_condition_id", "canonical_object", "scope", "risk_class", "failure_condition", "primary_impact_pathway", "horizon", "common_cause_group", "materiality", "evidence_state", "source_ids", "economic_effect_mode", "primary_carrier_id", "operator_ids", "owner", "reviewer", "status"],
+      "properties": {
+        "risk_condition_id": { "$ref": "#/$defs/id" },
+        "canonical_object": { "type": "string", "minLength": 1 },
+        "scope": { "type": "string", "minLength": 1 },
+        "risk_class": { "type": "string", "minLength": 1 },
+        "failure_condition": { "type": "string", "minLength": 1 },
+        "primary_impact_pathway": { "$ref": "#/$defs/impact_pathway" },
+        "horizon": { "type": "string", "minLength": 1 },
+        "common_cause_group": { "$ref": "#/$defs/nullable_id" },
+        "materiality": { "$ref": "#/$defs/materiality" },
+        "evidence_state": { "$ref": "#/$defs/evidence_state" },
+        "source_ids": { "type": "array", "items": { "$ref": "#/$defs/id" }, "uniqueItems": true },
+        "economic_effect_mode": { "enum": ["carrier", "operator", "carrier_and_operator", "immaterial_diagnostic"] },
+        "primary_carrier_id": { "$ref": "#/$defs/nullable_id" },
+        "operator_ids": { "type": "array", "items": { "$ref": "#/$defs/id" }, "uniqueItems": true },
+        "owner": { "type": "string", "minLength": 1 },
+        "reviewer": { "type": "string", "minLength": 1 },
+        "status": { "enum": ["draft", "approved", "stale", "superseded"] }
+      }
+    },
+    "attachment": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["attachment_id", "risk_condition_id", "layer_id", "edge_id", "graph_role", "attribution", "primary_carrier_id", "immediate_consequence", "impact_pathways", "materiality", "operator_ids", "source_ids", "rationale"],
+      "properties": {
+        "attachment_id": { "$ref": "#/$defs/id" },
+        "risk_condition_id": { "$ref": "#/$defs/id" },
+        "layer_id": { "$ref": "#/$defs/id" },
+        "edge_id": { "$ref": "#/$defs/nullable_id" },
+        "graph_role": { "enum": ["D", "I", "S", "R"] },
+        "attribution": { "enum": ["NEW", "CARRIED", "SHARED"] },
+        "primary_carrier_id": { "$ref": "#/$defs/nullable_id" },
+        "immediate_consequence": { "type": "string", "minLength": 1 },
+        "impact_pathways": { "type": "array", "minItems": 1, "items": { "$ref": "#/$defs/impact_pathway" }, "uniqueItems": true },
+        "materiality": { "$ref": "#/$defs/materiality" },
+        "operator_ids": { "type": "array", "items": { "$ref": "#/$defs/id" }, "uniqueItems": true },
+        "source_ids": { "type": "array", "items": { "$ref": "#/$defs/id" }, "uniqueItems": true },
+        "rationale": { "type": "string", "minLength": 1 }
+      }
+    },
+    "operator": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["operator_id", "operator_type", "target_id", "threshold_or_result", "trigger", "evidence_source_ids", "binding", "effect", "owner", "approver", "effective_date", "expiry_or_review_date"],
+      "properties": {
+        "operator_id": { "$ref": "#/$defs/id" },
+        "operator_type": { "enum": ["NONE", "RISK_SCORE_FLOOR", "RATING_CEILING", "CONFIDENCE_CEILING", "WATCHLIST", "NO_RATE", "REJECT"] },
+        "target_id": { "$ref": "#/$defs/id" },
+        "threshold_or_result": { "type": "string", "minLength": 1 },
+        "trigger": { "type": "string", "minLength": 1 },
+        "evidence_source_ids": { "type": "array", "items": { "$ref": "#/$defs/id" }, "uniqueItems": true },
+        "binding": { "type": "boolean" },
+        "effect": { "type": "string", "minLength": 1 },
+        "owner": { "type": "string", "minLength": 1 },
+        "approver": { "type": "string", "minLength": 1 },
+        "effective_date": { "type": "string", "format": "date" },
+        "expiry_or_review_date": { "type": "string", "format": "date" }
+      }
+    },
+    "propagation_step": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["layer_id", "child_layer_ids", "inherited_risk", "incremental_risk", "pre_operator_risk", "operator_ids", "indicated_risk", "indicated_grade", "indicated_confidence", "binding_driver_ids", "calculation"],
+      "properties": {
+        "layer_id": { "$ref": "#/$defs/id" },
+        "child_layer_ids": { "type": "array", "items": { "$ref": "#/$defs/id" }, "uniqueItems": true },
+        "inherited_risk": { "type": "number", "minimum": 0 },
+        "incremental_risk": { "type": "number", "minimum": 0 },
+        "pre_operator_risk": { "type": "number", "minimum": 0 },
+        "operator_ids": { "type": "array", "items": { "$ref": "#/$defs/id" }, "uniqueItems": true },
+        "indicated_risk": { "type": "number", "minimum": 0 },
+        "indicated_grade": { "enum": ["A", "BBB", "BB", "B", "CCC", "CC", "C", "D", "NO_RATE", "REJECT"] },
+        "indicated_confidence": { "$ref": "#/$defs/confidence" },
+        "binding_driver_ids": { "type": "array", "items": { "$ref": "#/$defs/id" }, "uniqueItems": true },
+        "calculation": { "type": "string", "minLength": 1 }
+      }
+    },
+    "critical_path_record": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["critical_path_record_id", "trigger", "affected_ids", "joint_or_sequential_failure_condition", "critical_date", "current_state", "expected_state", "stress_state", "recovery_or_substitution_time", "common_cause", "max_child_conservative", "max_child_rationale", "consequence_operator_ids", "scenario_result", "evidence_source_ids", "owner", "reviewer", "next_review_date", "status"],
+      "properties": {
+        "critical_path_record_id": { "$ref": "#/$defs/id" },
+        "trigger": { "type": "string", "minLength": 1 },
+        "affected_ids": { "type": "array", "minItems": 1, "items": { "$ref": "#/$defs/id" }, "uniqueItems": true },
+        "joint_or_sequential_failure_condition": { "type": "string", "minLength": 1 },
+        "critical_date": { "type": ["string", "null"], "format": "date" },
+        "current_state": { "type": "string", "minLength": 1 },
+        "expected_state": { "type": "string", "minLength": 1 },
+        "stress_state": { "type": "string", "minLength": 1 },
+        "recovery_or_substitution_time": { "type": "string", "minLength": 1 },
+        "common_cause": { "type": "string", "minLength": 1 },
+        "max_child_conservative": { "type": "boolean" },
+        "max_child_rationale": { "type": "string", "minLength": 1 },
+        "consequence_operator_ids": { "type": "array", "items": { "$ref": "#/$defs/id" }, "uniqueItems": true },
+        "scenario_result": { "type": "string", "minLength": 1 },
+        "evidence_source_ids": { "type": "array", "items": { "$ref": "#/$defs/id" }, "uniqueItems": true },
+        "owner": { "type": "string", "minLength": 1 },
+        "reviewer": { "type": "string", "minLength": 1 },
+        "next_review_date": { "type": "string", "format": "date" },
+        "status": { "enum": ["draft", "approved", "resolved", "superseded"] }
+      }
+    },
+    "mitigation_effectiveness_record": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["mitigation_effectiveness_record_id", "risk_condition_id", "impact_pathways", "control_or_substitute", "relief_requested", "authority", "trigger_and_executor", "activation_and_completion_time", "capacity_and_equivalence", "transition_cost_and_loss", "dependencies_and_common_cause", "override_powers", "test_history", "evidence_state", "evidence_source_ids", "evidence_expiry", "residual_risk", "remaining_operator_ids", "relief_granted", "owner", "reviewer", "approver", "status"],
+      "properties": {
+        "mitigation_effectiveness_record_id": { "$ref": "#/$defs/id" },
+        "risk_condition_id": { "$ref": "#/$defs/id" },
+        "impact_pathways": { "type": "array", "minItems": 1, "items": { "$ref": "#/$defs/impact_pathway" }, "uniqueItems": true },
+        "control_or_substitute": { "type": "string", "minLength": 1 },
+        "relief_requested": { "type": "string", "minLength": 1 },
+        "authority": { "type": "string", "minLength": 1 },
+        "trigger_and_executor": { "type": "string", "minLength": 1 },
+        "activation_and_completion_time": { "type": "string", "minLength": 1 },
+        "capacity_and_equivalence": { "type": "string", "minLength": 1 },
+        "transition_cost_and_loss": { "type": "string", "minLength": 1 },
+        "dependencies_and_common_cause": { "type": "string", "minLength": 1 },
+        "override_powers": { "type": "string", "minLength": 1 },
+        "test_history": { "type": "string", "minLength": 1 },
+        "evidence_state": { "$ref": "#/$defs/evidence_state" },
+        "evidence_source_ids": { "type": "array", "minItems": 1, "items": { "$ref": "#/$defs/id" }, "uniqueItems": true },
+        "evidence_expiry": { "type": "string", "format": "date" },
+        "residual_risk": { "type": "string", "minLength": 1 },
+        "remaining_operator_ids": { "type": "array", "items": { "$ref": "#/$defs/id" }, "uniqueItems": true },
+        "relief_granted": { "type": "boolean" },
+        "owner": { "type": "string", "minLength": 1 },
+        "reviewer": { "type": "string", "minLength": 1 },
+        "approver": { "type": "string", "minLength": 1 },
+        "status": { "enum": ["draft", "approved", "expired", "rejected", "superseded"] }
+      }
+    },
+    "gap": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["gap_id", "description", "materiality", "affected_ids", "consequence", "required_evidence", "owner", "status"],
+      "properties": {
+        "gap_id": { "$ref": "#/$defs/id" },
+        "description": { "type": "string", "minLength": 1 },
+        "materiality": { "$ref": "#/$defs/materiality" },
+        "affected_ids": { "type": "array", "items": { "$ref": "#/$defs/id" }, "uniqueItems": true },
+        "consequence": { "type": "string", "minLength": 1 },
+        "required_evidence": { "type": "string", "minLength": 1 },
+        "owner": { "type": "string", "minLength": 1 },
+        "status": { "enum": ["open", "resolved", "accepted", "expired"] }
+      }
+    },
+    "reconciliation_difference": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["reason_type", "dimension", "previous_value", "new_value", "evidence_source_ids", "owner", "approver", "effective_date", "expiry_date", "reassessment_trigger"],
+      "properties": {
+        "reason_type": { "enum": ["attribution", "operator", "evidence", "approved_calibration", "approved_exception", "methodology_version", "correction"] },
+        "dimension": { "enum": ["score", "grade", "confidence", "watchlist", "no_rate", "reject"] },
+        "previous_value": {},
+        "new_value": {},
+        "evidence_source_ids": { "type": "array", "items": { "$ref": "#/$defs/id" }, "uniqueItems": true },
+        "owner": { "type": "string", "minLength": 1 },
+        "approver": { "type": "string", "minLength": 1 },
+        "effective_date": { "type": "string", "format": "date" },
+        "expiry_date": { "type": ["string", "null"], "format": "date" },
+        "reassessment_trigger": { "type": "string", "minLength": 1 }
+      }
+    },
+    "reconciliation_record": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["reconciliation_record_id", "diagnostic_result", "chargeable_result", "indicated_score", "indicated_grade", "indicated_confidence", "approved_score", "approved_grade", "approved_confidence", "differences", "owner", "reviewer", "status"],
+      "properties": {
+        "reconciliation_record_id": { "$ref": "#/$defs/id" },
+        "diagnostic_result": { "type": "string", "minLength": 1 },
+        "chargeable_result": { "type": "string", "minLength": 1 },
+        "indicated_score": { "type": ["number", "null"], "minimum": 0 },
+        "indicated_grade": { "enum": ["A", "BBB", "BB", "B", "CCC", "CC", "C", "D", null] },
+        "indicated_confidence": { "$ref": "#/$defs/nullable_confidence" },
+        "approved_score": { "type": ["number", "null"], "minimum": 0 },
+        "approved_grade": { "enum": ["A", "BBB", "BB", "B", "CCC", "CC", "C", "D", "NO_RATE", "REJECT"] },
+        "approved_confidence": { "$ref": "#/$defs/nullable_confidence" },
+        "differences": { "type": "array", "items": { "$ref": "#/$defs/reconciliation_difference" } },
+        "owner": { "type": "string", "minLength": 1 },
+        "reviewer": { "type": "string", "minLength": 1 },
+        "status": { "enum": ["draft", "in_review", "approved", "superseded"] }
+      }
+    },
+    "limitation_record": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["limitation_id", "category", "statement", "affected_ids", "evidence_source_ids", "output_effect", "next_review_date", "methodology_change_impact", "owner", "reviewer", "status"],
+      "properties": {
+        "limitation_id": { "$ref": "#/$defs/id" },
+        "category": { "enum": ["source_access", "assumption", "stale_or_missing_evidence", "common_cause", "out_of_range_metric", "horizon", "known_omission", "conservative_bias", "methodology_change"] },
+        "statement": { "type": "string", "minLength": 1 },
+        "affected_ids": { "type": "array", "items": { "$ref": "#/$defs/id" }, "uniqueItems": true },
+        "evidence_source_ids": { "type": "array", "items": { "$ref": "#/$defs/id" }, "uniqueItems": true },
+        "output_effect": { "type": "string", "minLength": 1 },
+        "next_review_date": { "type": "string", "format": "date" },
+        "methodology_change_impact": { "type": "string", "minLength": 1 },
+        "owner": { "type": "string", "minLength": 1 },
+        "reviewer": { "type": "string", "minLength": 1 },
+        "status": { "enum": ["active", "resolved", "superseded"] }
+      }
+    },
+    "conclusion": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["conclusion_id", "conclusion_type", "subject_id", "statement", "outcome", "basis_ids", "source_ids", "decision_rule", "calculation", "rationale", "counterevidence", "uncertainty", "confidence", "review_status"],
+      "properties": {
+        "conclusion_id": { "$ref": "#/$defs/id" },
+        "conclusion_type": { "enum": ["factor", "component", "risk_condition", "attachment", "operator", "propagation", "critical_path", "mitigation", "gap", "reconciliation", "limitation", "final"] },
+        "subject_id": { "$ref": "#/$defs/id" },
+        "statement": { "type": "string", "minLength": 1 },
+        "outcome": {},
+        "basis_ids": { "type": "array", "items": { "$ref": "#/$defs/id" }, "uniqueItems": true },
+        "source_ids": { "type": "array", "items": { "$ref": "#/$defs/id" }, "uniqueItems": true },
+        "decision_rule": { "type": "string", "minLength": 1 },
+        "calculation": { "type": ["string", "null"], "minLength": 1 },
+        "rationale": { "type": "string", "minLength": 1 },
+        "counterevidence": { "type": "array", "items": { "type": "string", "minLength": 1 }, "uniqueItems": true },
+        "uncertainty": { "type": "string", "minLength": 1 },
+        "confidence": { "$ref": "#/$defs/nullable_confidence" },
+        "review_status": { "enum": ["analyst_complete", "reviewed", "approved", "disputed", "superseded"] }
+      }
+    },
+    "audit": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["title", "objective", "hypotheses", "status", "conclusion_coverage", "test_cases", "deviations", "acceptance_summary", "audit_limitations", "independent_reviewer", "approver"],
+      "properties": {
+        "title": { "type": "string", "minLength": 1 },
+        "objective": { "type": "string", "minLength": 1 },
+        "hypotheses": { "type": "array", "minItems": 1, "items": { "$ref": "#/$defs/audit_hypothesis" } },
+        "status": { "enum": ["draft", "frozen", "executed", "reviewed", "accepted", "rejected"] },
+        "conclusion_coverage": { "$ref": "#/$defs/conclusion_coverage" },
+        "test_cases": { "type": "array", "minItems": 1, "items": { "$ref": "#/$defs/audit_test_case" } },
+        "deviations": { "type": "array", "items": { "$ref": "#/$defs/audit_deviation" } },
+        "acceptance_summary": { "$ref": "#/$defs/acceptance_summary" },
+        "audit_limitations": { "type": "array", "minItems": 1, "items": { "type": "string", "minLength": 1 }, "uniqueItems": true },
+        "independent_reviewer": { "type": "string", "minLength": 1 },
+        "approver": { "type": "string", "minLength": 1 }
+      }
+    },
+    "audit_hypothesis": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["hypothesis_id", "statement", "success_criterion", "status", "conclusion"],
+      "properties": {
+        "hypothesis_id": { "$ref": "#/$defs/id" },
+        "statement": { "type": "string", "minLength": 1 },
+        "success_criterion": { "type": "string", "minLength": 1 },
+        "status": { "enum": ["untested", "supported", "not_supported", "inconclusive"] },
+        "conclusion": { "type": "string", "minLength": 1 }
+      }
+    },
+    "conclusion_coverage": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["required_conclusion_ids", "tested_conclusion_ids", "uncovered_conclusion_ids", "coverage_rate", "coverage_basis", "rationale"],
+      "properties": {
+        "required_conclusion_ids": { "type": "array", "minItems": 1, "items": { "$ref": "#/$defs/id" }, "uniqueItems": true },
+        "tested_conclusion_ids": { "type": "array", "minItems": 1, "items": { "$ref": "#/$defs/id" }, "uniqueItems": true },
+        "uncovered_conclusion_ids": { "type": "array", "items": { "$ref": "#/$defs/id" }, "uniqueItems": true },
+        "coverage_rate": { "type": "number", "minimum": 0, "maximum": 1 },
+        "coverage_basis": { "const": "conclusion_manifest" },
+        "rationale": { "type": "string", "minLength": 1 }
+      }
+    },
+    "acceptance_test_id": {
+      "enum": ["EXACT_OBJECT", "RECURSIVE_LAYER", "RECURSIVE_LAYER_MAP", "LAYER_SPECIFIC_VENUE", "SHARED_CONDITION_ATTRIBUTION", "CONTROL_VIEW_LAYOUT", "SCORECARD_RATIONALE", "EX_ANTE_PROPAGATION", "ATTRIBUTION_COMPLETENESS", "NO_RENORMALIZATION", "OPERATOR_TYPING", "LOSS_DOMINANCE", "NON_ADDITIVE_EVIDENCE", "EVIDENCE_OPERATOR", "DETERMINISTIC_SCORING", "SCORE_FORMATION_GATE", "SHARED_RISK_EFFECTIVENESS", "CRITICAL_PATH_TIME_CLIFF", "MITIGATION_RELIEF", "RESULT_RECONCILIATION", "FAMILY_LOSS_OBJECT", "MATERIALITY_CLASSIFICATION", "NO_RATE_REJECT", "SCORED_PILOT", "NA_GUARDRAIL", "DERIVATIVE_BRANCH", "NO_CLAIM_ASSET", "OUTPUT_VISIBILITY", "PORTFOLIO_OVERLAY_SEPARATION", "ATOMIC_SCHEMA", "COMPLEX_TRIGGER"]
+    },
+    "audit_test_case": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["test_case_id", "acceptance_test_id", "title", "purpose", "applicable", "not_applicable_reason", "input_record_ids", "conclusion_ids", "assertions", "analyst_rationale", "reviewer_rationale", "status", "deviation_ids", "evidence_source_ids"],
+      "properties": {
+        "test_case_id": { "$ref": "#/$defs/id" },
+        "acceptance_test_id": { "$ref": "#/$defs/acceptance_test_id" },
+        "title": { "type": "string", "minLength": 1 },
+        "purpose": { "type": "string", "minLength": 1 },
+        "applicable": { "type": "boolean" },
+        "not_applicable_reason": { "type": ["string", "null"], "minLength": 1 },
+        "input_record_ids": { "type": "array", "items": { "$ref": "#/$defs/id" }, "uniqueItems": true },
+        "conclusion_ids": { "type": "array", "minItems": 1, "items": { "$ref": "#/$defs/id" }, "uniqueItems": true },
+        "assertions": { "type": "array", "items": { "$ref": "#/$defs/audit_assertion" } },
+        "analyst_rationale": { "type": "string", "minLength": 1 },
+        "reviewer_rationale": { "type": "string", "minLength": 1 },
+        "status": { "$ref": "#/$defs/audit_test_status" },
+        "deviation_ids": { "type": "array", "items": { "$ref": "#/$defs/id" }, "uniqueItems": true },
+        "evidence_source_ids": { "type": "array", "items": { "$ref": "#/$defs/id" }, "uniqueItems": true }
+      },
+      "allOf": [{"if": {"properties": {"applicable": {"const": true}}}, "then": {"properties": {"not_applicable_reason": {"type": "null"}, "assertions": {"minItems": 1}}}, "else": {"properties": {"not_applicable_reason": {"type": "string", "minLength": 1}, "status": {"const": "not_applicable"}}}}]
+    },
+    "audit_test_status": { "enum": ["pass", "fail", "blocked", "not_run", "not_applicable"] },
+    "audit_assertion": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["assertion_id", "assertion_type", "target_pointer", "expected_value", "observed_value", "numeric_tolerance", "formula", "status", "evidence_source_ids", "rationale"],
+      "properties": {
+        "assertion_id": { "$ref": "#/$defs/id" },
+        "assertion_type": { "enum": ["JSON_POINTER_EQUALS", "JSON_POINTER_EXISTS", "FORMULA_RECALCULATES", "REFERENCE_INTEGRITY", "INVARIANT", "MANUAL_REVIEW"] },
+        "target_pointer": { "type": ["string", "null"], "pattern": "^/" },
+        "expected_value": {},
+        "observed_value": {},
+        "numeric_tolerance": { "type": ["number", "null"], "minimum": 0 },
+        "formula": { "type": ["string", "null"], "minLength": 1 },
+        "status": { "$ref": "#/$defs/audit_test_status" },
+        "evidence_source_ids": { "type": "array", "items": { "$ref": "#/$defs/id" }, "uniqueItems": true },
+        "rationale": { "type": "string", "minLength": 1 }
+      }
+    },
+    "audit_deviation": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["deviation_id", "test_case_id", "field_path", "expected_value", "observed_value", "materiality", "consequence", "resolution", "correction_change_id", "status"],
+      "properties": {
+        "deviation_id": { "$ref": "#/$defs/id" },
+        "test_case_id": { "$ref": "#/$defs/id" },
+        "field_path": { "type": "string", "minLength": 1 },
+        "expected_value": {},
+        "observed_value": {},
+        "materiality": { "$ref": "#/$defs/materiality" },
+        "consequence": { "type": "string", "minLength": 1 },
+        "resolution": { "type": "string", "minLength": 1 },
+        "correction_change_id": { "$ref": "#/$defs/nullable_id" },
+        "status": { "enum": ["open", "corrected", "accepted", "blocked"] }
+      }
+    },
+    "acceptance_summary": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["total", "passed", "failed", "blocked", "not_run", "not_applicable", "overall_status", "rating_decision", "decision_rationale"],
+      "properties": {
+        "total": { "type": "integer", "minimum": 1 },
+        "passed": { "type": "integer", "minimum": 0 },
+        "failed": { "type": "integer", "minimum": 0 },
+        "blocked": { "type": "integer", "minimum": 0 },
+        "not_run": { "type": "integer", "minimum": 0 },
+        "not_applicable": { "type": "integer", "minimum": 0 },
+        "overall_status": { "enum": ["pass", "fail", "blocked", "incomplete"] },
+        "rating_decision": { "enum": ["accept", "continue_assessment", "revise", "reject"] },
+        "decision_rationale": { "type": "string", "minLength": 1 }
+      }
+    },
+    "final_output": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["top_layer_id", "token_family_lane", "primary_loss_object", "secondary_loss_objects", "score_formation_gate_passed", "indicated_economic_score", "indicated_grade", "indicated_confidence", "approved_economic_score", "approved_grade", "approved_confidence", "watchlist", "no_rate", "rejected", "binding_driver_ids", "gap_ids", "critical_path_record_ids", "mitigation_effectiveness_record_ids", "reconciliation_record_id", "limitation_ids", "shared_factor_tags", "next_review_date", "summary"],
+      "properties": {
+        "top_layer_id": { "$ref": "#/$defs/id" },
+        "token_family_lane": { "type": "string", "minLength": 1 },
+        "primary_loss_object": { "type": "string", "minLength": 1 },
+        "secondary_loss_objects": { "type": "array", "items": { "type": "string", "minLength": 1 }, "uniqueItems": true },
+        "score_formation_gate_passed": { "type": "boolean" },
+        "indicated_economic_score": { "type": ["number", "null"], "minimum": 0 },
+        "indicated_grade": { "enum": ["A", "BBB", "BB", "B", "CCC", "CC", "C", "D", null] },
+        "indicated_confidence": { "$ref": "#/$defs/nullable_confidence" },
+        "approved_economic_score": { "type": ["number", "null"], "minimum": 0 },
+        "approved_grade": { "enum": ["A", "BBB", "BB", "B", "CCC", "CC", "C", "D", "NO_RATE", "REJECT"] },
+        "approved_confidence": { "$ref": "#/$defs/nullable_confidence" },
+        "watchlist": { "type": "boolean" },
+        "no_rate": { "type": "boolean" },
+        "rejected": { "type": "boolean" },
+        "binding_driver_ids": { "type": "array", "items": { "$ref": "#/$defs/id" }, "uniqueItems": true },
+        "gap_ids": { "type": "array", "items": { "$ref": "#/$defs/id" }, "uniqueItems": true },
+        "critical_path_record_ids": { "type": "array", "items": { "$ref": "#/$defs/id" }, "uniqueItems": true },
+        "mitigation_effectiveness_record_ids": { "type": "array", "items": { "$ref": "#/$defs/id" }, "uniqueItems": true },
+        "reconciliation_record_id": { "$ref": "#/$defs/id" },
+        "limitation_ids": { "type": "array", "minItems": 1, "items": { "$ref": "#/$defs/id" }, "uniqueItems": true },
+        "shared_factor_tags": { "type": "array", "items": { "type": "string", "minLength": 1 }, "uniqueItems": true },
+        "next_review_date": { "type": "string", "format": "date" },
+        "summary": { "type": "string", "minLength": 1 }
+      }
+    },
+    "approval": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["approval_id", "role", "person_or_function", "decision", "date", "scope", "notes"],
+      "properties": {
+        "approval_id": { "$ref": "#/$defs/id" },
+        "role": { "enum": ["analyst", "independent_reviewer", "model_validation", "risk_committee", "legal", "operations", "internal_audit"] },
+        "person_or_function": { "type": "string", "minLength": 1 },
+        "decision": { "enum": ["pending", "approved", "approved_with_conditions", "rejected"] },
+        "date": { "type": ["string", "null"], "format": "date" },
+        "scope": { "type": "string", "minLength": 1 },
+        "notes": { "type": "string" }
+      }
+    },
+    "change": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["change_id", "timestamp", "changed_by", "reason", "affected_ids", "field_path", "previous_value", "new_value", "evidence_source_ids", "approval_id", "rollback_reference"],
+      "properties": {
+        "change_id": { "$ref": "#/$defs/id" },
+        "timestamp": { "type": "string", "format": "date-time" },
+        "changed_by": { "type": "string", "minLength": 1 },
+        "reason": { "type": "string", "minLength": 1 },
+        "affected_ids": { "type": "array", "minItems": 1, "items": { "$ref": "#/$defs/id" }, "uniqueItems": true },
+        "field_path": { "type": "string", "pattern": "^/" },
+        "previous_value": {},
+        "new_value": {},
+        "evidence_source_ids": { "type": "array", "items": { "$ref": "#/$defs/id" }, "uniqueItems": true },
+        "approval_id": { "$ref": "#/$defs/id" },
+        "rollback_reference": { "$ref": "#/$defs/nullable_id" }
+      }
+    }
+  }
+}
