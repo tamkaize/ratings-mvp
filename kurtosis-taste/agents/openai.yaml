@@ -1,0 +1,14 @@
+interface:
+  display_name: Kurtosis Taste
+  short_description: Diagnose and improve work in Kurtosis taste
+  default_prompt: Use $kurtosis-taste to diagnose this work and make it feel unmistakably
+    Kurtosis.
+  icon_small: assets/icon.svg
+  icon_large: assets/icon.svg
+policy:
+  products:
+  - chatgpt
+  - codex
+  - api
+  - atlas
+  allow_implicit_invocation: true

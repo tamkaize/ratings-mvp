@@ -1,0 +1,23 @@
+.record { margin: 24px 0; }
+.heading { display: flex; flex-direction: column; align-items: flex-start; gap: 8px; }
+.heading h3 { margin: 0; }
+.recordLink { display: inline-flex; align-items: center; gap: 8px; color: var(--signal-blue, #0061e8); font-size: 13px; min-height: 36px; text-decoration: underline; text-underline-offset: 3px; }
+.recordLink svg { flex-shrink: 0; }
+.context, .provenance p { color: var(--slate, #57606a); font-size: 13px; line-height: 1.55; margin: 12px 0; }
+.group { border-top: 1px solid #dce2e9; }
+.group:last-of-type { border-bottom: 1px solid #dce2e9; }
+.group summary { padding: 16px 0; cursor: pointer; font-size: 14px; font-weight: 600; }
+.location { color: var(--slate, #57606a); font-size: 12px; margin: 0 0 12px; }
+.fields { margin: 0 0 16px; }
+.fields > div { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.25fr); gap: 16px; padding: 8px 0; }
+.fields dt { color: var(--slate, #57606a); }
+.fields dd { margin: 0; }
+.fields code, .provenance code { overflow-wrap: anywhere; white-space: normal; font-size: 12px; }
+.passage blockquote { margin: 16px 0 12px; border-left: 2px solid #263f63; padding: 0 0 0 16px; line-height: 1.6; font-size: 15px; }
+.provenance { margin-top: 16px; }
+.provenance summary { color: var(--slate, #57606a); font-size: 12px; cursor: pointer; }
+@media (max-width: 600px) {
+  .recordLink { min-height: 44px; }
+  .fields > div { grid-template-columns: minmax(0, 1fr); gap: 4px; padding: 8px 0; }
+  .provenance summary { min-height: 44px; align-content: center; }
+}

@@ -1,0 +1,93 @@
+<!doctype html>
+<html lang="en" data-theme="corporate">
+<head>
+  <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Token Ratings — MVP concept</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/daisyui@5.5.19/daisyui.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/daisyui@5.5.19/themes.css">
+  <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4.2.4/dist/index.global.js"></script>
+  <style>
+    :root { color-scheme:light; --color-primary:#24584f; --color-primary-content:#fff; }
+    * { box-sizing:border-box } body { margin:0; background:#f5f6f4; color:#202923; font-family:Inter,ui-sans-serif,system-ui,sans-serif; }
+    main { max-width:1180px; margin:auto; padding:32px 24px 64px; } p { line-height:1.65; }
+    h1,h2,h3,p { overflow-wrap:anywhere; } button,a,select,summary { outline-offset:5px; }
+    :focus-visible { outline:3px solid #24584f; } .eyebrow { font-size:11px; font-weight:700; letter-spacing:.14em; text-transform:uppercase; color:#56615c; }
+    .muted { color:#56615c } .panel { border:1px solid #dce1dc; border-radius:12px; background:white; }
+    .twocol { display:grid; grid-template-columns:minmax(0,1fr) minmax(0,1fr); gap:20px; }
+    .workspace { display:grid; grid-template-columns:220px minmax(0,1fr); gap:0; }
+    .sidebar { padding:26px 18px; border-right:1px solid #dce1dc; background:#f9faf8; border-radius:12px 0 0 12px; }
+    .body { padding:32px; min-width:0; } .metrics { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:16px; }
+    .metrics>div { padding:18px; border:1px solid #dce1dc; border-radius:10px; }
+    .big { font-size:28px; font-weight:600; letter-spacing:-.04em; } .note { padding:16px 20px; background:#fff6e8; border:1px solid #edd9b5; border-radius:8px; color:#694415; }
+    .line { padding:20px 0; border-bottom:1px solid #e4e7e3; } .line:last-child { border-bottom:0; }
+    .num { font-variant-numeric:tabular-nums; } [hidden] { display:none!important; }
+    @media(max-width:800px) { .workspace,.twocol { grid-template-columns:minmax(0,1fr); } .sidebar { border-right:0; border-bottom:1px solid #dce1dc; border-radius:12px 12px 0 0; } .body { padding:22px; } }
+    @media(max-width:540px) { main { padding:20px 12px 40px; } .metrics { grid-template-columns:minmax(0,1fr); } }
+  </style>
+</head>
+<body>
+<main>
+  <header class="flex flex-wrap items-start justify-between gap-4 mb-8">
+    <div><p class="eyebrow mb-3">Product direction / September 2026</p><h1 class="text-3xl font-semibold tracking-tight">Make the risk understandable.</h1><p class="muted mt-3 max-w-2xl">A curated research desk for token routes. Start with an assessment people can read, challenge, and share.</p></div>
+    <span class="badge badge-outline">Interactive concept</span>
+  </header>
+  <section class="panel workspace" aria-label="Proposed assessment interface">
+    <aside class="sidebar">
+      <p class="font-semibold text-lg tracking-tight mb-1">Token Ratings<span class="text-primary">.</span></p><p class="eyebrow mb-8">Research preview</p>
+      <label for="record" class="eyebrow block mb-3">Explore an assessment</label>
+      <select id="record" class="select w-full" aria-label="Choose assessment"><option value="pt">PT-sUSDai</option><option value="onyc">ONyc / Kamino</option></select>
+      <div class="mt-8 text-sm muted"><p>2 research examples</p><p class="mt-3">Methodology v0.3 alpha</p><p class="mt-3">Frozen July snapshots</p></div>
+      <p class="text-xs muted mt-10">Concept uses the newer JSON results. Sources and ratings have not been refreshed for this preview.</p>
+    </aside>
+    <div class="body">
+      <div class="flex flex-wrap items-center justify-between gap-3"><p class="eyebrow">Assessment / Overview</p><span class="badge badge-warning badge-soft">Review overdue</span></div>
+      <h2 id="name" class="text-3xl font-semibold tracking-tight mt-5"></h2>
+      <p id="route" class="muted mt-3"></p>
+      <div class="flex flex-wrap gap-2 mt-5"><span id="chain" class="badge badge-outline"></span><span class="badge badge-outline">Watchlist</span><span id="scope" class="badge badge-outline"></span></div>
+      <div class="metrics mt-7">
+        <div><p class="eyebrow">Approval outcome</p><p class="big mt-2">NO_RATE</p><p class="text-xs muted mt-2">No approved numeric rating</p></div>
+        <div><p class="eyebrow">Indicated grade</p><p id="grade" class="big num mt-2"></p><p id="score" class="text-xs muted mt-2"></p></div>
+        <div><p class="eyebrow">Evidence confidence</p><p class="big mt-2">Medium</p><p class="text-xs muted mt-2">Indicated result only</p></div>
+      </div>
+      <div class="note mt-6"><p class="font-semibold text-sm">Why approval is blocked</p><p id="blocker" class="text-sm mt-1"></p></div>
+      <nav aria-label="Assessment sections" class="flex flex-wrap gap-2 mt-7 border-b border-base-content/15 pb-3">
+        <button class="btn btn-sm btn-primary" data-panel="drivers" aria-pressed="true">Risk drivers</button><button class="btn btn-sm btn-ghost" data-panel="evidence" aria-pressed="false">Evidence gaps</button><button class="btn btn-sm btn-ghost" data-panel="details" aria-pressed="false">Review details</button>
+      </nav>
+      <section id="drivers" aria-label="Risk drivers"></section>
+      <section id="evidence" aria-label="Evidence gaps" hidden></section>
+      <section id="details" aria-label="Review details" hidden></section>
+      <p class="text-xs muted mt-6">Indicated scores are alpha methodology outputs. They are not default probabilities or approved agency credit ratings.</p>
+    </div>
+  </section>
+  <section class="mt-12" aria-labelledby="scope-title">
+    <p class="eyebrow mb-3">Build scope</p><h2 id="scope-title" class="text-2xl font-semibold mb-5">A useful first release</h2>
+    <div class="twocol">
+      <article class="panel p-6"><h3 class="font-semibold">Current State (Before)</h3><p class="mt-3 muted">A detailed methodology, two JSON assessment records, source registers, and validation code. Reading a rating means navigating files. Older summaries disagree with the newer records.</p></article>
+      <article class="panel p-6"><h3 class="font-semibold">Proposed State (After)</h3><p class="mt-3 muted">A searchable directory, a shareable assessment page, and an evidence view. Every displayed outcome comes from a versioned, validated record. Research examples are visibly labeled.</p></article>
+    </div>
+    <div class="grid md:grid-cols-3 gap-5 mt-5">
+      <article class="panel p-6"><p class="eyebrow">01 / Directory</p><h3 class="font-semibold mt-3">Find an exact route</h3><p class="muted text-sm mt-3">Search asset, chain, venue, and contract. Show approval outcome, indicated grade, review date, and route completeness in every result.</p></article>
+      <article class="panel p-6"><p class="eyebrow">02 / Assessment</p><h3 class="font-semibold mt-3">Understand the outcome</h3><p class="muted text-sm mt-3">Lead with a short explanation and three drivers. Expand into typed dependencies, inherited risk, local contributions, and approval blockers.</p></article>
+      <article class="panel p-6"><p class="eyebrow">03 / Evidence</p><h3 class="font-semibold mt-3">Check the reasoning</h3><p class="muted text-sm mt-3">Link each material claim to inspected sources and dates. State missing evidence, its consequence, and what would close the gap. Export the frozen record.</p></article>
+    </div>
+  </section>
+  <section class="panel p-6 mt-6">
+    <h2 class="text-xl font-semibold">How to earn the polished feel</h2>
+    <p class="mt-3 muted">Finish one real assessment page before extending the design. Use one spacing scale, quiet borders, consistent type, aligned numbers, and status labels that explain themselves. Keep evidence one interaction away.</p>
+    <p class="mt-3 muted">Check the same page at 390, 768, and 1440 pixels, with long route names, missing scores, loading failures, and keyboard navigation. Ask a reader to identify the outcome, main driver, and evidence blocker in 30 seconds.</p>
+    <details class="mt-5"><summary class="cursor-pointer font-medium">Implementation and repo caveats</summary><p class="muted mt-3">Suggested production stack: Next.js, TypeScript, Tailwind, and a customized shadcn/ui component set. Initially load reviewed JSON at build time and run the Python validator in CI. Add a database when analyst editing and review history require it.</p><p class="muted mt-3">The validator needs jsonschema installed. Its default schema path and the hardening tests refer to a different directory layout; the tests also reference a conformance fixture absent from this repo. Restore that setup before using validation as a publishing gate.</p></details>
+  </section>
+  <footer class="mt-7 text-xs muted">Design source: Lavish's Tailwind / DaisyUI fallback, using a light corporate theme because this repository has no existing frontend or design system. This is a concept artifact, not an implemented application.</footer>
+</main>
+<script>
+const records={
+  pt:{name:'PT-sUSDai-15OCT2026',route:'Buy and hold through Pendle; exit through the secondary market or PT/SY maturity redemption.',chain:'Arbitrum One',scope:'Identified PT route',grade:'B',score:'1.450',review:'2026-07-08',next:'2026-08-07',sources:26,gaps:7,blocker:'Applicable scoring specifications are unapproved. Material evidence and joint dependency gaps remain open.',drivers:[['Underlying loan and NAV exposure','The position inherits exposure to the sUSDai credit source. Current loan quality and valuation evidence remain incomplete.'],['Redemption and maturity mechanics','Recovery depends on the PT/SY route and lower-layer redemption mechanics, with a maturity on 15 October 2026.'],['Shared controls and dependencies','USD.AI controls and PYUSD reserve/custody conditions affect multiple layers and must remain visible without repeated charges.']],gapList:[['Unapproved scoring specifications','Close with deterministic scoring definitions, independent validation, and methodology approval.'],['Reserve backing reconciliation','Reconcile USDai supply to locked PYUSD and inspect the current attestation.'],['Loan book and NAV evidence','Inspect current loans, concentration, collateral values, losses, and NAV reconciliation.']]},
+  onyc:{name:'ONyc / Kamino Multiply',route:'A leveraged ONyc collateral and USD stablecoin debt route pattern; exact live position parameters are unresolved.',chain:'Solana',scope:'Route pattern only',grade:'CCC',score:'1.650',review:'2026-07-09',next:'2026-08-09',sources:21,gaps:8,blocker:'Scoring specifications are unapproved and the live reserve, debt asset, leverage, and other exact-route evidence remain unresolved.',drivers:[['Leverage and liquidation','NAV changes, borrowing costs, and available exit liquidity can interact and trigger liquidation.'],['Reinsurance source and redemption','Value depends on underwriting, NAV, and the holder’s conditional redemption path.'],['Oracle and reserve configuration','The exact collateral valuation, debt reserve, and liquidation settings need verification for a live-position assessment.']],gapList:[['Unapproved scoring specifications','Close with approved factor definitions, implementation tests, and independent validation.'],['Exact reserve or vault identity','Reconcile the live Kamino identifiers to the ONyc mint.'],['Exact debt asset','Resolve USDC versus USDG and inspect the corresponding debt reserve and borrowing conditions.']]}
+};
+function lines(items){return items.map(([title,body])=>'<article class="line"><h3 class="font-semibold text-sm">'+title+'</h3><p class="muted text-sm mt-2">'+body+'</p></article>').join('');}
+function render(){const d=records[document.getElementById('record').value];for(const key of ['name','route','chain','scope','grade','blocker'])document.getElementById(key).textContent=d[key];document.getElementById('score').textContent=d.score+' · unapproved indication';document.getElementById('drivers').innerHTML=lines(d.drivers);document.getElementById('evidence').innerHTML=lines(d.gapList)+'<p class="text-xs muted mt-4">Showing 3 of '+d.gaps+' recorded gaps in this concept.</p>';document.getElementById('details').innerHTML=lines([['Evidence cutoff',d.review+' · '+d.sources+' sources recorded.'],['Scheduled next review',d.next+' · overdue as of 7 September 2026.'],['Version and approval','Schema 2.0.2-alpha · methodology v0.3-alpha. Approved score and approved confidence are both absent.']]);}
+document.getElementById('record').addEventListener('change',render);
+document.querySelectorAll('[data-panel]').forEach(button=>button.addEventListener('click',()=>{document.querySelectorAll('[data-panel]').forEach(b=>{const active=b===button;b.classList.toggle('btn-primary',active);b.classList.toggle('btn-ghost',!active);b.setAttribute('aria-pressed',String(active));document.getElementById(b.dataset.panel).hidden=!active;});}));render();
+</script>
+</body>
+</html>
