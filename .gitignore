@@ -5,3 +5,11 @@ out/
 test-results/
 playwright-report/
 .env*.local
+
+# Local Python caches and operating-system download metadata
+__pycache__/
+*.py[cod]
+.venv/
+.DS_Store
+Thumbs.db
+*:Zone.Identifier
